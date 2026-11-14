@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Collectrix">
+  <title>Collectrix — Card Stack</title>
+  <defs>
+    <mask id="cut">
+      <rect width="100" height="100" fill="#fff"/>
+      <path d="M 33 53 L 47 60 L 33 67 Z" fill="#000" stroke="#000" stroke-width="5" stroke-linejoin="round"/>
+    </mask>
+  </defs>
+  <rect x="38" y="14" width="44" height="44" rx="10" fill="currentColor" opacity="0.16"/>
+  <rect x="28" y="26" width="44" height="44" rx="10" fill="currentColor" opacity="0.34"/>
+  <rect x="18" y="38" width="44" height="44" rx="10" fill="currentColor" mask="url(#cut)"/>
+</svg>

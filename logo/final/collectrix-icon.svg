@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Collectrix">
+  <title>Collectrix — 拟物主图标</title>
+  <defs>
+    <!-- 背景：自上而下的品牌蓝，右上带高光 -->
+    <linearGradient id="bg" x1="0.18" y1="0" x2="0.72" y2="1">
+      <stop offset="0" stop-color="#4FA0F2"/>
+      <stop offset="0.52" stop-color="#1E6FD0"/>
+      <stop offset="1" stop-color="#0B4EA2"/>
+    </linearGradient>
+    <radialGradient id="bgGlow" cx="0.28" cy="0.16" r="0.75">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.30"/>
+      <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.72">
+      <stop offset="0.62" stop-color="#001B3D" stop-opacity="0"/>
+      <stop offset="1" stop-color="#001B3D" stop-opacity="0.26"/>
+    </radialGradient>
+
+    <!-- 卡片材质 -->
+    <linearGradient id="cardFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.55" stop-color="#F7F9FC"/>
+      <stop offset="1" stop-color="#E4EAF3"/>
+    </linearGradient>
+    <radialGradient id="cardSheen" cx="0.3" cy="0.12" r="0.85">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.85"/>
+      <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cardLip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C9D5E5"/>
+      <stop offset="1" stop-color="#A9B9CF"/>
+    </linearGradient>
+    <linearGradient id="cardLipSide" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#C2CFE0"/>
+      <stop offset="1" stop-color="#9FB2C9"/>
+    </linearGradient>
+
+    <!-- 播放键：珐琅质感的蓝 -->
+    <linearGradient id="play" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="#4CA6F5"/>
+      <stop offset="0.45" stop-color="#1E77D6"/>
+      <stop offset="1" stop-color="#0E54A8"/>
+    </linearGradient>
+
+    <filter id="stackShadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#041F47" flood-opacity="0.45"/>
+    </filter>
+    <filter id="cardShadow" x="-25%" y="-25%" width="150%" height="160%">
+      <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#0A2A55" flood-opacity="0.30"/>
+    </filter>
+    <filter id="playShadow" x="-40%" y="-40%" width="180%" height="200%">
+      <feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#06366F" flood-opacity="0.42"/>
+    </filter>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <clipPath id="tileClip">
+      <rect width="512" height="512" rx="112"/>
+    </clipPath>
+  </defs>
+
+  <!-- ===== 背景底板 ===== -->
+  <g clip-path="url(#tileClip)">
+    <rect width="512" height="512" fill="url(#bg)"/>
+    <rect width="512" height="512" fill="url(#bgGlow)"/>
+    <rect width="512" height="512" fill="url(#vignette)"/>
+    <!-- 斜向高光扫过 -->
+    <path d="M -40 300 L 300 -40 L 420 -40 L 60 380 Z" fill="#FFFFFF" opacity="0.055"/>
+  </g>
+  <rect x="1.5" y="1.5" width="509" height="509" rx="110.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.20" stroke-width="3"/>
+
+  <!-- ===== 卡片堆叠 ===== -->
+  <g filter="url(#stackShadow)">
+    <!-- 第三张（最远） -->
+    <g filter="url(#cardShadow)">
+      <rect x="146" y="78" width="300" height="300" rx="64" fill="url(#cardLipSide)"/>
+      <rect x="140" y="72" width="300" height="306" rx="64" fill="url(#cardLip)"/>
+      <rect x="140" y="72" width="300" height="300" rx="64" fill="url(#cardFace)" stroke="#0B2B55" stroke-opacity="0.10" stroke-width="1.5"/>
+      <rect x="140" y="72" width="300" height="300" rx="64" fill="url(#cardSheen)"/>
+    </g>
+    <!-- 第二张 -->
+    <g filter="url(#cardShadow)">
+      <rect x="112" y="112" width="300" height="300" rx="64" fill="url(#cardLipSide)"/>
+      <rect x="106" y="106" width="300" height="306" rx="64" fill="url(#cardLip)"/>
+      <rect x="106" y="106" width="300" height="300" rx="64" fill="url(#cardFace)" stroke="#0B2B55" stroke-opacity="0.10" stroke-width="1.5"/>
+      <rect x="106" y="106" width="300" height="300" rx="64" fill="url(#cardSheen)"/>
+    </g>
+    <!-- 第一张（最前） -->
+    <g filter="url(#cardShadow)">
+      <rect x="78" y="146" width="300" height="300" rx="64" fill="url(#cardLipSide)"/>
+      <rect x="72" y="140" width="300" height="306" rx="64" fill="url(#cardLip)"/>
+      <rect x="72" y="140" width="300" height="300" rx="64" fill="url(#cardFace)" stroke="#0B2B55" stroke-opacity="0.10" stroke-width="1.5"/>
+      <rect x="72" y="140" width="300" height="300" rx="64" fill="url(#cardSheen)"/>
+      <!-- 前卡上缘的高光棱 -->
+      <path d="M 136 142.5 H 308" fill="none" stroke="#FFFFFF" stroke-opacity="0.95" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- 前卡底部内侧的曲面阴影 -->
+      <path d="M 136 437.5 H 308" fill="none" stroke="#98AAC2" stroke-opacity="0.45" stroke-width="2" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- ===== 前卡细节：压印点阵 + 凸起的播放键 ===== -->
+  <g>
+    <!-- 点阵（矩阵暗示，压印质感） -->
+    <g>
+      <g fill="#FFFFFF" fill-opacity="0.7" transform="translate(0,1.8)">
+        <circle cx="300" cy="270" r="4.5"/><circle cx="320" cy="270" r="4.5"/><circle cx="340" cy="270" r="4.5"/>
+        <circle cx="300" cy="290" r="4.5"/><circle cx="320" cy="290" r="4.5"/><circle cx="340" cy="290" r="4.5"/>
+        <circle cx="300" cy="310" r="4.5"/><circle cx="320" cy="310" r="4.5"/><circle cx="340" cy="310" r="4.5"/>
+      </g>
+      <g fill="#0E3358" fill-opacity="0.14">
+        <circle cx="300" cy="270" r="4"/><circle cx="320" cy="270" r="4"/><circle cx="340" cy="270" r="4"/>
+        <circle cx="300" cy="290" r="4"/><circle cx="320" cy="290" r="4"/><circle cx="340" cy="290" r="4"/>
+        <circle cx="300" cy="310" r="4"/><circle cx="320" cy="310" r="4"/><circle cx="340" cy="310" r="4"/>
+      </g>
+    </g>
+
+    <!-- 播放键：凸起的珐琅片 -->
+    <g filter="url(#playShadow)">
+      <path d="M 184 246 L 262 290 L 184 334 Z"
+            fill="url(#play)"
+            stroke="url(#play)"
+            stroke-width="16"
+            stroke-linejoin="round"/>
+      <!-- 上缘受光 -->
+      <path d="M 190 256 L 248 286" fill="none" stroke="#FFFFFF" stroke-opacity="0.38" stroke-width="5" stroke-linecap="round"/>
+      <!-- 下缘背光 -->
+      <path d="M 190 324 L 248 294" fill="none" stroke="#06366F" stroke-opacity="0.26" stroke-width="4" stroke-linecap="round"/>
+      <!-- 高光点 -->
+      <ellipse cx="206" cy="270" rx="15" ry="9" fill="#FFFFFF" fill-opacity="0.20" filter="url(#soft)" transform="rotate(-36 206 270)"/>
+    </g>
+  </g>
+</svg>

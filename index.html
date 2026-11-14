@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/collectrix-logo-flat.svg" />
+    <meta name="theme-color" content="#1976D2" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>Collectrix</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--boot-bg, #f5f7fa);
+        color: var(--boot-fg, #1b1b1f);
+        font-family: Roboto, "Segoe UI", sans-serif;
+      }
+      .boot-splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+      .boot-orbit {
+        position: relative;
+        width: 96px;
+        height: 96px;
+        display: grid;
+        place-items: center;
+      }
+      .boot-curve {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        color: var(--boot-accent, #1976d2);
+        overflow: visible;
+        animation: boot-orbit 12s linear infinite;
+      }
+      .boot-curve path {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 3.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 480;
+        stroke-dashoffset: 480;
+        animation: boot-draw 2.8s ease-in-out infinite alternate;
+      }
+      .boot-logo {
+        position: relative;
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        box-shadow: 0 10px 28px rgba(25, 118, 210, 0.22);
+      }
+      .boot-title {
+        font-size: 1.45rem;
+        font-weight: 700;
+      }
+      .boot-caption {
+        font-size: 12px;
+        color: var(--boot-muted, rgba(27, 27, 31, 0.6));
+      }
+      @keyframes boot-orbit {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @keyframes boot-draw {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+    </style>
+    <script>
+      // 首屏前套用上次的主题色，避免深色主题用户先看到一片白。
+      (function () {
+        try {
+          var theme = localStorage.getItem("collectrix.theme") || "light";
+          if (theme.indexOf("dark") === 0) {
+            var root = document.documentElement.style;
+            root.setProperty("--boot-bg", "#121418");
+            root.setProperty("--boot-fg", "#f2f5f8");
+            root.setProperty("--boot-muted", "rgba(242, 245, 248, 0.6)");
+            root.setProperty("--boot-spinner", "#2a3038");
+            root.setProperty("--boot-accent", "#90caf9");
+          }
+        } catch (e) {
+          // 隐私模式等场景读不到 localStorage，回落到默认浅色。
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div id="app">
+      <div class="boot-splash">
+        <div class="boot-orbit">
+          <svg class="boot-curve" viewBox="0 0 100 100" aria-hidden="true">
+            <path id="boot-curve-path"></path>
+          </svg>
+          <img
+            src="/collectrix-logo-flat.svg"
+            alt="Collectrix"
+            class="boot-logo"
+          />
+        </div>
+        <div class="boot-title">Collectrix</div>
+        <div class="boot-caption">正在加载…</div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var curvePath = document.querySelector("#boot-curve-path");
+        if (curvePath) {
+          var points = [];
+          for (var i = 0; i <= 240; i++) {
+            var t = (i / 240) * Math.PI * 2;
+            var x = 50 + (7 * Math.cos(t) - 2.4 * Math.cos(7 * t)) * 3.9;
+            var y = 50 + (7 * Math.sin(t) - 2.4 * Math.sin(7 * t)) * 3.9;
+            points.push((i === 0 ? "M " : "L ") + x.toFixed(2) + " " + y.toFixed(2));
+          }
+          curvePath.setAttribute("d", points.join(" "));
+        }
+        function bootError(message) {
+          var caption = document.querySelector(".boot-caption");
+          if (caption && document.querySelector(".boot-splash")) {
+            caption.textContent = "加载失败：" + message;
+            caption.style.color = "#c62828";
+          }
+        }
+        window.addEventListener("error", function (event) {
+          bootError(event.message || "未知错误");
+        });
+        window.addEventListener("unhandledrejection", function (event) {
+          bootError(String(event.reason || "未知错误"));
+        });
+        window.setTimeout(function () {
+          var caption = document.querySelector(".boot-caption");
+          if (caption && document.querySelector(".boot-splash")) {
+            caption.textContent = "加载时间较长，请稍候或重启应用…";
+          }
+        }, 15000);
+      })();
+    </script>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Collectrix">
+  <title>Collectrix — Converge</title>
+  <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+    <path d="M 10 22 C 34 22 50 38 58 46"/>
+    <path d="M 10 36 C 32 36 48 44 58 48"/>
+    <path d="M 10 50 C 30 50 46 50 58 50"/>
+    <path d="M 10 64 C 32 64 48 56 58 52"/>
+    <path d="M 10 78 C 34 78 50 62 58 54"/>
+  </g>
+  <circle cx="68" cy="50" r="10" fill="currentColor"/>
+</svg>

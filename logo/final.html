@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collectrix — 最终图标</title>
+<style>
+  :root{
+    --ink:#101827; --ink-2:#4A5568; --ink-3:#98A2B3;
+    --line:#E4E7EC; --paper:#F7F7F5; --card:#FFFFFF;
+    --blue:#1976D2; --blue-soft:#EAF2FB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Inter","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6;
+  }
+  .mono{font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+
+  /* hero */
+  .hero{display:grid;grid-template-columns:360px 1fr;gap:64px;align-items:center;padding:72px 0 64px;border-bottom:1px solid var(--line)}
+  .hero .art{position:relative;display:grid;place-items:center}
+  .hero .art::after{
+    content:"";position:absolute;inset:8% 12%;border-radius:50%;
+    background:radial-gradient(circle,rgba(25,118,210,.22),transparent 68%);filter:blur(34px);z-index:-1;
+  }
+  .hero .art img{width:320px;height:320px;filter:drop-shadow(0 26px 40px rgba(9,40,80,.28))}
+  .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-3)}
+  h1{font-size:clamp(30px,3.4vw,42px);font-weight:600;letter-spacing:-.02em;line-height:1.18;margin:16px 0 14px;text-wrap:balance}
+  .lede{color:var(--ink-2);font-size:15px;max-width:520px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+  .chip{font-size:11px;letter-spacing:.04em;color:var(--ink-2);background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+  .chip b{color:var(--blue);font-weight:600}
+
+  section{padding:64px 0;border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:30px}
+  .sec-head h2{font-size:19px;font-weight:600;letter-spacing:-.01em}
+  .sec-head span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+
+  /* synthesis list */
+  .synth{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .synth div{background:#fff;padding:18px 20px}
+  .synth .k{font-size:10px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase}
+  .synth .v{font-size:13.5px;margin-top:6px}
+  .synth .v small{display:block;font-size:11.5px;color:var(--ink-3);margin-top:4px;line-height:1.5}
+  .dim{opacity:.45}
+
+  /* material */
+  .mat{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+  .mat .list{display:grid;gap:14px}
+  .mat .row{display:grid;grid-template-columns:96px 1fr;gap:16px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+  .mat .row:last-child{border-bottom:0;padding-bottom:0}
+  .mat .row dt{font-size:11px;letter-spacing:.1em;color:var(--ink-3);text-transform:uppercase;padding-top:2px}
+  .mat .row dd{font-size:13.5px;color:var(--ink-2)}
+  .mat .row dd b{color:var(--ink);font-weight:600}
+  .stage{
+    background:linear-gradient(160deg,#EDF3FA,#DFE8F4);border-radius:22px;padding:44px;
+    display:grid;place-items:center;border:1px solid #D7E1EF;
+  }
+  .stage img{width:280px;height:280px;filter:drop-shadow(0 22px 32px rgba(9,40,80,.26))}
+
+  /* sizes */
+  .sizes{display:flex;align-items:flex-end;gap:34px;flex-wrap:wrap}
+  .s{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .s img{display:block;border-radius:22%}
+  .s .l{font-size:10px;color:var(--ink-3);letter-spacing:.08em}
+  .s.big img{border-radius:24%}
+  .note{margin-top:22px;font-size:12px;color:var(--ink-3)}
+  .note code{font-family:Consolas,monospace;background:#EEF1F5;border-radius:4px;padding:1px 6px;color:var(--ink-2);font-size:11px}
+
+  /* three states */
+  .states{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .state{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .state .box{height:150px;display:grid;place-items:center;width:100%}
+  .state img.full{width:150px;height:150px}
+  .state img.flatimg{width:150px;height:150px;border-radius:22%}
+  .state .mono-mark{width:84px;height:84px;color:#101827}
+  .state .cap{font-size:12px;color:var(--ink-2);text-align:center}
+  .state .cap b{display:block;font-size:12.5px;margin-bottom:2px;color:var(--ink)}
+  .state .cap span{color:var(--ink-3);font-size:11px}
+
+  /* lockup */
+  .lock{background:#fff;border:1px solid var(--line);border-radius:20px;padding:38px 40px;display:flex;align-items:center;gap:18px}
+  .lock img{width:64px;height:64px}
+  .lock .wm{font-size:30px;font-weight:600;letter-spacing:-.03em;line-height:1}
+  .lock .wm small{display:block;font-size:10.5px;letter-spacing:.2em;color:var(--ink-3);margin-top:8px;text-transform:uppercase}
+  .lock .div{width:1px;height:52px;background:var(--line);margin:0 14px}
+  .lock .alt{display:flex;align-items:center;gap:10px}
+  .lock .alt svg{width:34px;height:34px;color:var(--blue)}
+  .lock .alt .wm2{font-size:18px;font-weight:600;letter-spacing:-.02em;color:var(--ink-2)}
+
+  /* files */
+  .files{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .file{display:flex;align-items:baseline;gap:12px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+  .file code{font-family:Consolas,monospace;font-size:12px;color:var(--blue)}
+  .file span{font-size:12px;color:var(--ink-2)}
+
+  footer{padding:36px 0 64px;color:var(--ink-3);font-size:12px}
+
+  @media (max-width:960px){
+    .hero{grid-template-columns:1fr;gap:32px;text-align:center}
+    .hero .art img{width:240px;height:240px}
+    .chips{justify-content:center}
+    .synth{grid-template-columns:repeat(2,1fr)}
+    .mat{grid-template-columns:1fr}
+    .states{grid-template-columns:1fr}
+    .files{grid-template-columns:1fr}
+    .lock{flex-wrap:wrap}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="art">
+      <img src="final/collectrix-icon.svg" alt="Collectrix icon">
+    </div>
+    <div>
+      <p class="eyebrow">Collectrix · Final Mark</p>
+      <h1>一叠收进来的收藏，<br>按下去就开始播放。</h1>
+      <p class="lede">
+        把前面的方向收成一件“实体”：一张蓝色底板承托一叠白色卡片，最上面那张压着点阵、嵌着一枚珐琅质感的播放键。
+        卡片有厚度、有投影、有受光面——它像一个你能拿起来的物件，而不是一个平面的图形。
+      </p>
+      <div class="chips">
+        <span class="chip"><b>01</b> 方砖底板 + 播放键</span>
+        <span class="chip"><b>02</b> 卡面点阵</span>
+        <span class="chip"><b>05</b> 三层卡片堆叠</span>
+        <span class="chip"><b>07</b> 卡片厚度侧边</span>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head"><h2>八个方向，各自留下了什么</h2><span>Synthesis</span></div>
+    <div class="synth">
+      <div>
+        <div class="k">01 Tile Play</div>
+        <div class="v">底板 + 播放键<small>圆角方砖变成蓝色底板，播放三角从负空间变成凸起的珐琅片。</small></div>
+      </div>
+      <div>
+        <div class="k">02 Dot Play</div>
+        <div class="v">卡面点阵<small>网格压印在卡面右侧，低对比、只作材质，不抢主体。</small></div>
+      </div>
+      <div>
+        <div class="k">03 Converge</div>
+        <div class="v">结构式汇聚<small>不再画线：三层卡片本身就是“多源收进同一张前卡”。</small></div>
+      </div>
+      <div>
+        <div class="k">04 C Play</div>
+        <div class="v">留给字标<small>C 的开口＋播放三角保留为字标符号，不塞进图标。</small></div>
+      </div>
+      <div>
+        <div class="k">05 Card Stack</div>
+        <div class="v">主体骨架<small>三层错位卡片直接成为图标主体，实体感与“可翻阅”都从这里来。</small></div>
+      </div>
+      <div>
+        <div class="k">06 Node Graph</div>
+        <div class="v">弱化为点阵<small>节点概念收进点阵，避免图标里出现两套语言。</small></div>
+      </div>
+      <div>
+        <div class="k">07 Spine Library</div>
+        <div class="v">卡片厚度<small>每张卡下缘 6px 的“书脊”侧边，是这套拟物最关键的物理线索。</small></div>
+      </div>
+      <div class="dim">
+        <div class="k">08 Corner Frame</div>
+        <div class="v">未采用<small>取景框与堆叠抢结构，保留在探索稿里作备选。</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>材质与光</h2><span>Material</span></div>
+    <div class="mat">
+      <div class="stage"><img src="final/collectrix-icon.svg" alt="material study"></div>
+      <div class="list">
+        <div class="row"><dt>底板</dt><dd><b>斜向品牌蓝渐变</b>（#4FA0F2 → #0B4EA2）＋左上角柔光 ＋ 四周暗角，像一个被打了顶光的亚克力块。</dd></div>
+        <div class="row"><dt>卡面</dt><dd><b>纵向白→浅灰渐变</b>＋左上斜向高光（sheen），上缘 2.5px 白色棱线，下缘 2px 冷灰内阴影，做出轻微外鼓的弧度。</dd></div>
+        <div class="row"><dt>厚度</dt><dd>每张卡下方 <b>6px 侧边</b>（#C9D5E5 → #A9B9CF），露出“书脊”；配合逐层 7px 投影，堆叠关系才立得住。</dd></div>
+        <div class="row"><dt>播放键</dt><dd><b>珐琅质感</b>：蓝色渐变填充＋上缘受光、下缘背光、左上高光点，外投影 7px，像嵌进卡面的一枚金属片。</dd></div>
+        <div class="row"><dt>点阵</dt><dd><b>压印</b>：深色点在 14% 处，白点在下方 1.8px 处 70%——一深一浅即形成凹陷错觉。</dd></div>
+        <div class="row"><dt>边缘</dt><dd>外框 3px 白色 20% 描边，模拟玻璃或亚克力的倒角反光。</dd></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>尺寸阶梯</h2><span>16 → 512 px</span></div>
+    <div class="sizes">
+      <div class="s big"><img src="final/collectrix-icon.svg" width="256" height="256"><span class="l mono">256</span></div>
+      <div class="s big"><img src="final/collectrix-icon.svg" width="128" height="128"><span class="l mono">128</span></div>
+      <div class="s"><img src="final/collectrix-icon.svg" width="96" height="96"><span class="l mono">96</span></div>
+      <div class="s"><img src="final/collectrix-icon.svg" width="64" height="64"><span class="l mono">64</span></div>
+      <div class="s"><img src="final/collectrix-icon-flat.svg" width="48" height="48"><span class="l mono">48</span></div>
+      <div class="s"><img src="final/collectrix-icon-flat.svg" width="32" height="32"><span class="l mono">32</span></div>
+      <div class="s"><img src="final/collectrix-icon-flat.svg" width="24" height="24"><span class="l mono">24</span></div>
+      <div class="s"><img src="final/collectrix-icon-flat.svg" width="16" height="16"><span class="l mono">16</span></div>
+    </div>
+    <p class="note">≥64px 用拟物版，阴影和厚度都能看清；≤48px 换 <code>collectrix-icon-flat.svg</code>，去掉投影与高光只留形状与点阵，避免糊成一团。</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>三个交付状态</h2><span>Color · Flat · Mono</span></div>
+    <div class="states">
+      <div class="state">
+        <div class="box"><img class="full" src="final/collectrix-icon.svg" alt="skeuomorphic"></div>
+        <div class="cap"><b>拟物版</b><span>应用图标 / 商店图 / 官网</span></div>
+      </div>
+      <div class="state">
+        <div class="box"><img class="flatimg" src="final/collectrix-icon-flat.svg" alt="flat"></div>
+        <div class="cap"><b>扁平版</b><span>≤48px / 单色背景 / 印刷</span></div>
+      </div>
+      <div class="state">
+        <div class="box">
+          <svg class="mono-mark" viewBox="0 0 100 100">
+            <defs><mask id="cut"><rect width="100" height="100" fill="#fff"/><path d="M 35 39 L 51 50 L 35 61 Z" fill="#000" stroke="#000" stroke-width="5" stroke-linejoin="round"/></mask></defs>
+            <g mask="url(#cut)">
+              <rect x="26" y="10" width="56" height="56" rx="14" fill="currentColor" opacity="0.24"/>
+              <rect x="20" y="16" width="56" height="56" rx="14" fill="currentColor" opacity="0.48"/>
+              <rect x="14" y="22" width="56" height="56" rx="14" fill="currentColor"/>
+            </g>
+          </svg>
+        </div>
+        <div class="cap"><b>单色标记</b><span>托盘 / 水印 / 烫印 / 代码仓库头像</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>与字标组合</h2><span>Lockup</span></div>
+    <div class="lock">
+      <img src="final/collectrix-icon.svg" alt="icon">
+      <div class="wm">Collectrix<small>Local-first library</small></div>
+      <div class="div"></div>
+      <div class="alt">
+        <svg viewBox="0 0 100 100"><path d="M 69.15 66.07 A 25 25 0 1 1 69.15 33.93" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/><path d="M 43 40 L 63 50 L 43 60 Z" fill="currentColor" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg>
+        <span class="wm2">Collectrix</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>文件</h2><span>Files</span></div>
+    <div class="files">
+      <div class="file"><code>final/collectrix-icon.svg</code><span>拟物主图标 512</span></div>
+      <div class="file"><code>final/collectrix-icon-flat.svg</code><span>扁平版 512</span></div>
+      <div class="file"><code>final/collectrix-mark-mono.svg</code><span>单色标记 100</span></div>
+      <div class="file"><code>variants/01…08</code><span>探索稿</span></div>
+    </div>
+    <p class="note">下一步：导出 1024 PNG 后执行 <code>npm run tauri icon &lt;png&gt;</code> 生成桌面全平台图标；Android 另出 48/72/96/144/192 五档（前景留 66% 安全区，背景用品牌蓝 #1976D2）。</p>
+  </section>
+
+  <footer>Collectrix final mark · 拟物方向 · 2026-11-07</footer>
+</div>
+
+</body>
+</html>

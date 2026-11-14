@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Collectrix">
+  <title>Collectrix — Corner Frame</title>
+  <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round">
+    <path d="M 16 38 V 28 A 12 12 0 0 1 28 16 H 38"/>
+    <path d="M 62 16 H 72 A 12 12 0 0 1 84 28 V 38"/>
+    <path d="M 84 62 V 72 A 12 12 0 0 1 72 84 H 62"/>
+    <path d="M 38 84 H 28 A 12 12 0 0 1 16 72 V 62"/>
+  </g>
+  <path d="M 42 36 L 66 50 L 42 64 Z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+</svg>

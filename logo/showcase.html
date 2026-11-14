@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collectrix — Logo 设计探索</title>
+<style>
+  :root{
+    --ink:#111827;
+    --ink-2:#4B5563;
+    --ink-3:#9CA3AF;
+    --line:#E5E7EB;
+    --paper:#FAFAF9;
+    --card:#FFFFFF;
+    --canvas:#F3F4F2;
+    --brand:#1976D2;
+    --brand-soft:#EAF2FB;
+    --radius:18px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Inter","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    background:var(--paper);color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+  }
+  .mono{font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+  /* ---------- header ---------- */
+  header{padding:88px 0 56px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:500;
+  }
+  h1{
+    font-size:clamp(34px,4.4vw,56px);font-weight:600;letter-spacing:-.02em;
+    line-height:1.12;margin:20px 0 18px;text-wrap:balance;
+  }
+  h1 em{font-style:normal;color:var(--brand)}
+  .lede{max-width:620px;color:var(--ink-2);font-size:16px}
+  .lede b{font-weight:600;color:var(--ink)}
+
+  .specs{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);
+    margin-top:48px;border-radius:12px;overflow:hidden;
+  }
+  .spec{background:var(--paper);padding:18px 20px}
+  .spec dt{font-size:11px;letter-spacing:.16em;color:var(--ink-3);text-transform:uppercase;margin-bottom:6px}
+  .spec dd{font-size:14px;color:var(--ink)}
+  .spec dd small{display:block;color:var(--ink-3);font-size:12px;margin-top:2px}
+
+  /* ---------- section ---------- */
+  section{padding:72px 0}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:36px;border-bottom:1px solid var(--line);padding-bottom:16px}
+  .sec-head h2{font-size:20px;font-weight:600;letter-spacing:-.01em}
+  .sec-head span{font-size:12px;color:var(--ink-3);letter-spacing:.14em;text-transform:uppercase}
+
+  /* ---------- variant grid ---------- */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px;display:flex;flex-direction:column;gap:14px;
+    transition:transform .6s cubic-bezier(.16,1,.3,1),box-shadow .6s cubic-bezier(.16,1,.3,1),border-color .6s;
+  }
+  .card:hover{transform:translateY(-5px);box-shadow:0 18px 44px -22px rgba(17,24,39,.35);border-color:#D8DEE6}
+  .canvas{
+    position:relative;aspect-ratio:1/1;border-radius:12px;background:var(--canvas);
+    display:grid;place-items:center;overflow:hidden;
+    transition:background .6s cubic-bezier(.16,1,.3,1);
+  }
+  .card:hover .canvas{background:var(--brand-soft)}
+  .canvas svg{width:58%;height:58%;color:var(--ink);transition:color .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+  .card:hover .canvas svg{color:var(--brand);transform:scale(1.04)}
+  .num{position:absolute;top:10px;left:12px;font-size:10px;letter-spacing:.16em;color:var(--ink-3)}
+  .tag{position:absolute;top:10px;right:12px;font-size:10px;letter-spacing:.06em;color:var(--ink-3);background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 8px}
+  .card h3{font-size:15px;font-weight:600;letter-spacing:-.01em}
+  .card h3 small{font-weight:400;color:var(--ink-3);font-size:12px;margin-left:6px;letter-spacing:0}
+  .card p{font-size:12.5px;line-height:1.75;color:var(--ink-2)}
+
+  /* ---------- scale row ---------- */
+  .scale{display:flex;align-items:flex-end;gap:44px;flex-wrap:wrap}
+  .scale-item{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .scale-item svg{color:var(--ink);display:block}
+  .scale-item .lbl{font-size:10px;color:var(--ink-3);letter-spacing:.1em}
+
+  /* ---------- applications ---------- */
+  .apps{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:24px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:flex;flex-direction:column;gap:18px;justify-content:space-between;min-height:210px}
+  .panel .cap{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+  .app-icon{
+    width:96px;height:96px;border-radius:24px;background:var(--brand);color:#fff;
+    display:grid;place-items:center;box-shadow:0 10px 26px -12px rgba(25,118,210,.7);
+  }
+  .app-icon svg{width:64%;height:64%}
+  .dark-tile{
+    width:96px;height:96px;border-radius:24px;background:#111827;color:#fff;
+    display:grid;place-items:center;
+  }
+  .dark-tile svg{width:64%;height:64%}
+  .fav-row{display:flex;align-items:center;gap:14px;background:#F9FAFB;border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+  .fav-row .dot{width:16px;height:16px;color:var(--brand)}
+  .fav-row .dot svg{width:16px;height:16px;display:block}
+  .fav-row .url{font-size:12px;color:var(--ink-2)}
+  .lockup{display:flex;align-items:center;gap:14px}
+  .lockup .mark{width:44px;height:44px;color:var(--brand)}
+  .lockup .mark svg{width:44px;height:44px;display:block}
+  .lockup .word{font-size:26px;font-weight:600;letter-spacing:-.03em;line-height:1}
+  .lockup .word small{display:block;font-size:11px;font-weight:400;letter-spacing:.18em;color:var(--ink-3);margin-top:6px;text-transform:uppercase}
+
+  /* ---------- notes ---------- */
+  .notes{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:28px 32px;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  .notes h4{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+  .notes p,.notes li{font-size:13px;color:var(--ink-2);line-height:1.8}
+  .notes ul{list-style:none}
+  .notes li{display:flex;gap:8px}
+  .notes li::before{content:"—";color:var(--ink-3)}
+
+  footer{padding:40px 0 72px;border-top:1px solid var(--line);margin-top:24px}
+  footer p{font-size:12px;color:var(--ink-3)}
+  footer code{font-family:"JetBrains Mono",Consolas,monospace;font-size:11px;background:#F3F4F6;border:1px solid var(--line);border-radius:5px;padding:1px 6px;color:var(--ink-2)}
+
+  @media (max-width:1080px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .apps{grid-template-columns:1fr}
+    .notes{grid-template-columns:1fr}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 20px}
+    header{padding:56px 0 36px}
+    .specs{grid-template-columns:1fr 1fr}
+    .grid{grid-template-columns:1fr}
+    .scale{gap:28px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Collectrix · Logo Exploration</p>
+    <h1>把散落各处的收藏，<br>收进<em>同一块</em>矩阵。</h1>
+    <p class="lede">
+      基于项目 README 提炼：<b>本地优先</b>的视频收藏与知识管理应用，从 B 站、YouTube、抖音、博客、GitHub
+      汇入同一个本地 SQLite 资料库，再用分类、标签、主题、记事本、思维导图和 AI 整理成形。
+      下面 8 个方向都围绕“<b>多源汇聚 → 一个可翻阅的库</b>”这一件事，单色可印、以 <span class="mono">viewBox 0 0 100 100</span> 绘制。
+    </p>
+    <dl class="specs">
+      <div class="spec"><dt>Brand</dt><dd>Collectrix<small>collect + matrix</small></dd></div>
+      <div class="spec"><dt>Category</dt><dd>本地优先 · 视频收藏 / 知识管理<small>Tauri 2 · 桌面 + Android</small></dd></div>
+      <div class="spec"><dt>Core idea</dt><dd>汇聚 · 矩阵 · 整理<small>从一堆链接到一座图书馆</small></dd></div>
+      <div class="spec"><dt>Style</dt><dd>几何极简 · 单色可印<small>墨黑 #111827 · 品牌蓝 #1976D2</small></dd></div>
+    </dl>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>八个方向</h2>
+      <span>8 variants · hover to preview</span>
+    </div>
+
+    <div class="grid">
+
+      <!-- 01 -->
+      <article class="card">
+        <div class="canvas">
+          <span class="num mono">01</span><span class="tag">纯几何</span>
+          <svg viewBox="0 0 100 100" aria-label="Tile Play">
+            <defs><mask id="m1"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs>
+            <rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#m1)"/>
+          </svg>
+        </div>
+        <h3>Tile Play <small>矩阵方砖</small></h3>
+        <p>一块圆角方砖就是应用图标本身，播放三角用负空间直接切出。方块＝“库”这一块地基，三角＝内容。最耐缩小，16px 仍可辨认，适合做桌面/安卓图标与 favicon。</p>
+      </article>
+
+      <!-- 02 -->
+      <article class="card">
+        <div class="canvas">
+          <span class="num mono">02</span><span class="tag">点阵</span>
+          <svg viewBox="0 0 100 100" aria-label="Dot Play">
+            <g fill="currentColor" opacity="0.11">
+              <rect x="45" y="15" width="10" height="10" rx="2.5"/><rect x="45" y="75" width="10" height="10" rx="2.5"/>
+              <rect x="60" y="15" width="10" height="10" rx="2.5"/><rect x="60" y="75" width="10" height="10" rx="2.5"/>
+            </g>
+            <g fill="currentColor">
+              <rect x="30" y="15" width="10" height="10" rx="2.5"/><rect x="30" y="30" width="10" height="10" rx="2.5"/>
+              <rect x="30" y="45" width="10" height="10" rx="2.5"/><rect x="30" y="60" width="10" height="10" rx="2.5"/>
+              <rect x="30" y="75" width="10" height="10" rx="2.5"/>
+              <rect x="45" y="30" width="10" height="10" rx="2.5"/><rect x="45" y="45" width="10" height="10" rx="2.5"/>
+              <rect x="45" y="60" width="10" height="10" rx="2.5"/><rect x="60" y="45" width="10" height="10" rx="2.5"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Dot Play <small>点阵浮现</small></h3>
+        <p>点阵网格代表一条条收藏，九个实心格子拼出播放三角，四角压到 11% 灰做“矩阵”暗示。说的是收藏的本质：从一堆条目里一眼看出内容。</p>
+      </article>
+
+      <!-- 03 -->
+      <article class="card">
+        <div class="canvas">
+          <span class="num mono">03</span><span class="tag">线系统</span>
+          <svg viewBox="0 0 100 100" aria-label="Converge">
+            <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+              <path d="M 10 22 C 34 22 50 38 58 46"/>
+              <path d="M 10 36 C 32 36 48 44 58 48"/>
+              <path d="M 10 50 C 30 50 46 50 58 50"/>
+              <path d="M 10 64 C 32 64 48 56 58 52"/>
+              <path d="M 10 78 C 34 78 50 62 58 54"/>
+            </g>
+            <circle cx="68" cy="50" r="10" fill="currentColor"/>
+          </svg>
+        </div>
+        <h3>Converge <small>多源合流</small></h3>
+        <p>五条来自左侧的来源（B 站 / YouTube / 抖音 / GitHub / 博客）收束成右侧一个实心节点。这就是产品最核心的动作：多源导入，落到同一个本地库。</p>
+      </article>
+
+      <!-- 04 -->
+      <article class="card">
+        <div class="canvas">
+          <span class="num mono">04</span><span class="tag">字母</span>
+          <svg viewBox="0 0 100 100" aria-label="C Play">
+            <path d="M 69.15 66.07 A 25 25 0 1 1 69.15 33.93" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
+            <path d="M 43 40 L 63 50 L 43 60 Z" fill="currentColor" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>C Play <small>C 字播放</small></h3>
+        <p>粗弧 C 取自 Collectrix 首字母，缺口刚好被播放三角填住——字形与功能一次说完。最适合放在字标左侧当符号位，也适合做圆形社交头像。</p>
+      </article>
+
+      <!-- 05 -->
+      <article class="card">
+        <div class="canvas">
+          <span class="num mono">05</span><span class="tag">层叠</span>
+          <svg viewBox="0 0 100 100" aria-label="Card Stack">
+            <defs><mask id="m5"><rect width="100" height="100" fill="#fff"/><path d="M 33 53 L 47 60 L 33 67 Z" fill="#000" stroke="#000" stroke-width="5" stroke-linejoin="round"/></mask></defs>
+            <rect x="38" y="14" width="44" height="44" rx="10" fill="currentColor" opacity="0.16"/>
+            <rect x="28" y="26" width="44" height="44" rx="10" fill="currentColor" opacity="0.34"/>
+            <rect x="18" y="38" width="44" height="44" rx="10" fill="currentColor" mask="url(#m5)"/>
+          </svg>
+        </div>
+        <h3>Card Stack <small>一叠收藏</small></h3>
+        <p>三张错位的圆角卡片，像已经入库、可以逐张翻阅的收藏，最上面一张切出播放。强调“本地、实体、属于你”的那一面，和云盘类产品拉开距离。</p>
+      </article>
+
+      <!-- 06 -->
+      <article class="card">
+        <div class="canvas">
+          <span class="num mono">06</span><span class="tag">网络</span>
+          <svg viewBox="0 0 100 100" aria-label="Node Graph">
+            <defs><mask id="m6"><rect width="100" height="100" fill="#fff"/><path d="M 45.5 43.5 L 58.5 50 L 45.5 56.5 Z" fill="#000" stroke="#000" stroke-width="4" stroke-linejoin="round"/></mask></defs>
+            <g stroke="currentColor" stroke-width="2" fill="none" opacity="0.45">
+              <path d="M 31 32 L 44 43"/><path d="M 72 28 L 57 42"/>
+              <path d="M 74 72 L 58 58"/><path d="M 32 74 L 43 57"/>
+            </g>
+            <circle cx="26" cy="30" r="6.5" fill="currentColor"/>
+            <circle cx="74" cy="26" r="4.5" fill="currentColor" opacity="0.75"/>
+            <circle cx="76" cy="74" r="5.5" fill="currentColor" opacity="0.9"/>
+            <circle cx="30" cy="76" r="4" fill="currentColor" opacity="0.65"/>
+            <circle cx="50" cy="50" r="15" fill="currentColor" mask="url(#m6)"/>
+          </svg>
+        </div>
+        <h3>Node Graph <small>知识网络</small></h3>
+        <p>四个卫星节点（分类 / 标签 / 主题 / 记事本）连向中心枢纽，枢纽里藏着一枚播放键。对应 README 后半段的“知识管理”：单个视频会连成网。</p>
+      </article>
+
+      <!-- 07 -->
+      <article class="card">
+        <div class="canvas">
+          <span class="num mono">07</span><span class="tag">条状</span>
+          <svg viewBox="0 0 100 100" aria-label="Spine Library">
+            <g fill="currentColor">
+              <rect x="18" y="40" width="8" height="44" rx="4"/>
+              <rect x="30" y="22" width="8" height="62" rx="4"/>
+              <rect x="42" y="48" width="8" height="36" rx="4"/>
+              <rect x="54" y="30" width="8" height="54" rx="4"/>
+            </g>
+            <path d="M 68 40 L 86 52 L 68 64 Z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Spine Library <small>书架书脊</small></h3>
+        <p>四根高低不一的“书脊”既像书架，也像视频时长条；右侧一枚播放三角收尾。疏密有节奏、体量扎实，适合做启动页或大尺寸打印头像。</p>
+      </article>
+
+      <!-- 08 -->
+      <article class="card">
+        <div class="canvas">
+          <span class="num mono">08</span><span class="tag">取景框</span>
+          <svg viewBox="0 0 100 100" aria-label="Corner Frame">
+            <g fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round">
+              <path d="M 16 38 V 28 A 12 12 0 0 1 28 16 H 38"/>
+              <path d="M 62 16 H 72 A 12 12 0 0 1 84 28 V 38"/>
+              <path d="M 84 62 V 72 A 12 12 0 0 1 72 84 H 62"/>
+              <path d="M 38 84 H 28 A 12 12 0 0 1 16 72 V 62"/>
+            </g>
+            <path d="M 42 36 L 66 50 L 42 64 Z" fill="currentColor" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Corner Frame <small>四角取景</small></h3>
+        <p>四角取景框把内容框住，中心留一枚播放键——“收藏＝取景归档”。最克制的一版，线条只有一种粗细逻辑，适合与等宽字体搭配的极客气质。</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>缩小测试</h2>
+      <span>16 → 64 px</span>
+    </div>
+    <div class="scale">
+      <div class="scale-item">
+        <svg width="16" height="16" viewBox="0 0 100 100"><defs><mask id="s1"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs><rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#s1)"/></svg>
+        <span class="lbl mono">16</span>
+      </div>
+      <div class="scale-item">
+        <svg width="24" height="24" viewBox="0 0 100 100"><defs><mask id="s2"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs><rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#s2)"/></svg>
+        <span class="lbl mono">24</span>
+      </div>
+      <div class="scale-item">
+        <svg width="32" height="32" viewBox="0 0 100 100"><defs><mask id="s3"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs><rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#s3)"/></svg>
+        <span class="lbl mono">32</span>
+      </div>
+      <div class="scale-item">
+        <svg width="48" height="48" viewBox="0 0 100 100"><defs><mask id="s4"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs><rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#s4)"/></svg>
+        <span class="lbl mono">48</span>
+      </div>
+      <div class="scale-item">
+        <svg width="64" height="64" viewBox="0 0 100 100"><defs><mask id="s5"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs><rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#s5)"/></svg>
+        <span class="lbl mono">64</span>
+      </div>
+      <div class="scale-item" style="margin-left:auto">
+        <svg width="72" height="72" viewBox="0 0 100 100" style="color:var(--brand)"><path d="M 69.15 66.07 A 25 25 0 1 1 69.15 33.93" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/><path d="M 43 40 L 63 50 L 43 60 Z" fill="currentColor" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/></svg>
+        <span class="lbl mono">C 方案</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>落到界面里</h2>
+      <span>icon · favicon · wordmark</span>
+    </div>
+    <div class="apps">
+
+      <div class="panel">
+        <span class="cap">App icon</span>
+        <div style="display:flex;align-items:center;gap:22px">
+          <div class="app-icon">
+            <svg viewBox="0 0 100 100"><defs><mask id="a1"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs><rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#a1)"/></svg>
+          </div>
+          <div class="dark-tile">
+            <svg viewBox="0 0 100 100"><defs><mask id="a2"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs><rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#a2)"/></svg>
+          </div>
+        </div>
+        <p style="font-size:12px;color:var(--ink-2)">浅色用品牌蓝底白花，深色模式用近黑底。两种底都能保持 4.5:1 以上对比。</p>
+      </div>
+
+      <div class="panel">
+        <span class="cap">Favicon / tab</span>
+        <div class="fav-row">
+          <span class="dot">
+            <svg viewBox="0 0 100 100"><defs><mask id="a3"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs><rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#a3)"/></svg>
+          </span>
+          <span class="url">Collectrix — 本地视频收藏与知识管理</span>
+        </div>
+        <p style="font-size:12px;color:var(--ink-2)">16px 下三角仍清晰，圆角方砖与系统标签页形状一致，不会被裁掉识别度。</p>
+      </div>
+
+      <div class="panel">
+        <span class="cap">Wordmark</span>
+        <div class="lockup">
+          <span class="mark">
+            <svg viewBox="0 0 100 100"><defs><mask id="a4"><rect width="100" height="100" fill="#fff"/><path d="M 41 37 L 62 50 L 41 63 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask></defs><rect x="14" y="14" width="72" height="72" rx="22" fill="currentColor" mask="url(#a4)"/></svg>
+          </span>
+          <span class="word">Collectrix<small>Local-first library</small></span>
+        </div>
+        <p style="font-size:12px;color:var(--ink-2)">符号位与字标间距 14px，字标可用 Inter / 思源黑体 SemiBold，字距收紧 -3%。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="notes">
+      <div>
+        <h4>设计依据</h4>
+        <ul>
+          <li>多源导入（B 站 / YouTube / 抖音 / 博客 / GitHub）→ 汇聚与合流</li>
+          <li>本地 SQLite 资料库 → 实体感、层叠、书架</li>
+          <li>“Collectrix” 里的 matrix → 网格、点阵、条状节奏</li>
+          <li>分类 / 标签 / 主题 / 思维导图 → 节点与网络</li>
+          <li>默认主题蓝 #1976D2 + 墨黑 #111827，单色可印</li>
+        </ul>
+      </div>
+      <div>
+        <h4>交付与下一步</h4>
+        <ul>
+          <li>矢量源文件：<code>logo/variants/*.svg</code>（currentColor，改色即用）</li>
+          <li>本页：<code>logo/showcase.html</code>，可直接浏览器打开</li>
+          <li>选定方向后：出 1024 PNG、补齐 16/32/48/64/128/256 图标、生成 Tauri 的 <code>icon.ico</code>/<code>icns</code> 与 Android 各密度资源</li>
+          <li>需要的话再走展示图流程（Nano Banana，需 Gemini API Key）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Collectrix logo exploration · 8 variants · 单色 currentColor 矢量 · 生成日期 2026-11-07</p>
+  </div>
+</footer>
+
+</body>
+</html>
