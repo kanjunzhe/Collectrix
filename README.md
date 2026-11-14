@@ -138,6 +138,26 @@ cd src-tauri
 cargo check
 ```
 
+## Linux / macOS 构建
+
+Windows 本地环境不能直接生成 Linux 和 macOS 安装包，项目提供了 GitHub Actions 工作流：
+
+```text
+.github/workflows/build-desktop.yml
+```
+
+包含：
+
+- Windows：NSIS / MSI
+- Ubuntu 22.04：`.deb` + `.AppImage`
+- macOS 15 Intel：`.app` + `.dmg`
+- macOS 15 Apple Silicon：`.app` + `.dmg`
+- Android：arm64 debug APK（使用 debug 签名，可直接安装测试）
+
+在 GitHub 仓库的 Actions 页面手动运行 `Build all platforms`，或推送 `v*` 标签触发构建。产物会作为 workflow artifacts 上传。
+
+> macOS 工作流未配置 Apple Developer 签名/公证，生成的是未签名开发包；正式分发需要补充 codesign、notarization 和 Apple 证书。
+
 ## Android
 
 Android 工程位于 `src-tauri/gen/android`。

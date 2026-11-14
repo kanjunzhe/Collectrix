@@ -2,7 +2,7 @@ use reqwest::Client;
 use serde::Serialize;
 use std::time::Duration;
 
-const UPDATE_API: &str = "https://api.github.com/repos/kandimord/collectrix/releases/latest";
+const UPDATE_API: &str = "https://api.github.com/repos/kanjunzhe/collectrix/releases/latest";
 
 #[derive(Debug, Serialize)]
 pub struct UpdateInfo {
