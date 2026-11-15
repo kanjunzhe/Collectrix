@@ -203,11 +203,7 @@
       <v-card-text>
         <v-select
           v-model="settings.transcribe_provider"
-          :items="[
-            { title: t('本地 Whisper (whisper.cpp)'), value: 'local' },
-            { title: t('在线 Whisper (OpenAI 兼容)'), value: 'openai' },
-            { title: t('Bilibili 字幕'), value: 'bilibili' },
-          ]"
+          :items="transcribeProviderOptions"
           item-title="title"
           item-value="value"
           :label="t('转录方式')"
@@ -242,9 +238,7 @@
           <v-text-field
             v-model="settings.openai_base_url"
             label="API Base URL"
-            :placeholder="
-              t('https://api.openai.com/v1 或 https://api.siliconflow.cn/v1')
-            "
+            :placeholder="t('https://api.openai.com/v1 或 https://api.siliconflow.cn/v1')"
             density="compact"
             variant="outlined"
           />
@@ -274,12 +268,7 @@
         <v-select
           v-if="settings.transcribe_provider !== 'bilibili'"
           v-model="settings.whisper_language"
-          :items="[
-            { title: t('自动检测'), value: 'auto' },
-            { title: t('中文'), value: 'zh' },
-            { title: t('英语'), value: 'en' },
-            { title: t('日语'), value: 'ja' },
-          ]"
+          :items="whisperLanguageOptions"
           item-title="title"
           item-value="value"
           :label="t('识别语言')"
@@ -314,17 +303,7 @@
         <template v-if="settings.ai_enabled">
         <v-select
           v-model="settings.ai_provider"
-          :items="[
-            { title: t('OpenAI / 兼容服务（云）'), value: 'openai' },
-            { title: t('DeepSeek'), value: 'deepseek' },
-            { title: t('硅基流动 SiliconFlow'), value: 'siliconflow' },
-            { title: t('Groq'), value: 'groq' },
-            { title: t('Kimi / Moonshot'), value: 'moonshot' },
-            { title: t('通义千问 (DashScope)'), value: 'qwen' },
-            { title: t('智谱 GLM'), value: 'zhipu' },
-            { title: t('Ollama（本地）'), value: 'ollama' },
-            { title: t('自定义'), value: 'custom' },
-          ]"
+          :items="aiProviderOptions"
           item-title="title"
           item-value="value"
           :label="t('AI 提供者')"
@@ -334,11 +313,7 @@
         <v-text-field
           v-model="settings.openai_base_url"
           label="API Base URL"
-          :placeholder="
-            settings.ai_provider === 'ollama'
-              ? 'http://localhost:11434/v1'
-              : 'https://api.openai.com/v1'
-          "
+          :placeholder="openaiBaseUrlPlaceholder"
           density="compact"
           variant="outlined"
         />
@@ -354,9 +329,7 @@
         <v-text-field
           v-model="settings.ai_model"
           :label="t('模型名')"
-          :placeholder="
-            settings.ai_provider === 'ollama' ? 'qwen2.5:7b' : 'gpt-4o-mini'
-          "
+          :placeholder="aiModelPlaceholder"
           density="compact"
           variant="outlined"
         />
@@ -615,6 +588,41 @@ async function onQrLoggedIn() {
     console.warn("刷新 B 站 Cookie 失败", e);
   }
 }
+
+const transcribeProviderOptions = computed(() => [
+  { title: t("本地 Whisper (whisper.cpp)"), value: "local" },
+  { title: t("在线 Whisper (OpenAI 兼容)"), value: "openai" },
+  { title: t("Bilibili 字幕"), value: "bilibili" },
+]);
+
+const whisperLanguageOptions = computed(() => [
+  { title: t("自动检测"), value: "auto" },
+  { title: t("中文"), value: "zh" },
+  { title: t("英语"), value: "en" },
+  { title: t("日语"), value: "ja" },
+]);
+
+const aiProviderOptions = computed(() => [
+  { title: t("OpenAI / 兼容服务（云）"), value: "openai" },
+  { title: t("DeepSeek"), value: "deepseek" },
+  { title: t("硅基流动 SiliconFlow"), value: "siliconflow" },
+  { title: t("Groq"), value: "groq" },
+  { title: t("Kimi / Moonshot"), value: "moonshot" },
+  { title: t("通义千问 (DashScope)"), value: "qwen" },
+  { title: t("智谱 GLM"), value: "zhipu" },
+  { title: t("Ollama（本地）"), value: "ollama" },
+  { title: t("自定义"), value: "custom" },
+]);
+
+const openaiBaseUrlPlaceholder = computed(() =>
+  settings.value.ai_provider === "ollama"
+    ? "http://localhost:11434/v1"
+    : "https://api.openai.com/v1",
+);
+
+const aiModelPlaceholder = computed(() =>
+  settings.value.ai_provider === "ollama" ? "qwen2.5:7b" : "gpt-4o-mini",
+);
 
 const videoQualityOptions = computed(() => [
   { title: t("最高画质"), value: "best" },

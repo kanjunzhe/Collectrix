@@ -15,6 +15,7 @@ dist-ssr
 # Android release signing (local secrets)
 src-tauri/gen/android/keystore.properties
 src-tauri/android-keystore/
+src-tauri/gen/android/.kotlin/
 
 # Editor directories and files
 .vscode/*
