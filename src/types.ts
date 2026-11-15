@@ -191,6 +191,7 @@ export interface AppSettings {
 
   // 在线语音转录
   transcribe_provider: string; // "local" | "openai" | "bilibili"
+  transcribe_auto_polish: boolean;
   openai_api_key: string;
   openai_base_url: string;
   openai_transcribe_model: string; // "whisper-1" 等

@@ -71,25 +71,75 @@ async fn fetch_github_page(owner: &str, repo: &str) -> Result<WebPage, String> {
     let language = json["language"].as_str().unwrap_or("—");
     let stars = json["stargazers_count"].as_i64().unwrap_or(0);
     let forks = json["forks_count"].as_i64().unwrap_or(0);
+    let watchers = json["subscribers_count"]
+        .as_i64()
+        .or_else(|| json["watchers_count"].as_i64())
+        .unwrap_or(0);
+    let issues = json["open_issues_count"].as_i64().unwrap_or(0);
     let homepage = json["homepage"].as_str().filter(|value| !value.is_empty());
     let updated_at = json["updated_at"].as_str().map(String::from);
+    let created_at = json["created_at"].as_str().map(String::from);
+    let default_branch = json["default_branch"].as_str().unwrap_or("main");
+    let archived = json["archived"].as_bool().unwrap_or(false);
+    let topics = json["topics"]
+        .as_array()
+        .map(|items| {
+            items
+                .iter()
+                .filter_map(|item| item.as_str())
+                .map(|item| format!("<code>{}</code>", escape_html(item)))
+                .collect::<Vec<_>>()
+                .join(" ")
+        })
+        .filter(|value| !value.is_empty());
+    let license = json["license"]["spdx_id"]
+        .as_str()
+        .or_else(|| json["license"]["name"].as_str());
 
     let mut html = String::new();
     if let Some(text) = &description {
         html.push_str(&format!("<p>{}</p>", escape_html(text)));
     }
     html.push_str("<ul>");
-    html.push_str(&format!("<li>Language: {}</li>", escape_html(language)));
-    html.push_str(&format!("<li>Stars: {stars}</li>"));
-    html.push_str(&format!("<li>Forks: {forks}</li>"));
+    html.push_str(&format!("<li>语言：{}</li>", escape_html(language)));
+    html.push_str(&format!("<li>Stars：{stars}</li>"));
+    html.push_str(&format!("<li>Forks：{forks}</li>"));
+    html.push_str(&format!("<li>Watchers：{watchers}</li>"));
+    html.push_str(&format!("<li>Open issues：{issues}</li>"));
+    html.push_str(&format!(
+        "<li>默认分支：<code>{}</code></li>",
+        escape_html(default_branch)
+    ));
+    if let Some(license) = license {
+        html.push_str(&format!("<li>许可证：{}</li>", escape_html(license)));
+    }
     if let Some(homepage) = homepage {
         html.push_str(&format!(
-            "<li>Homepage: <a href=\"{}\">{}</a></li>",
+            "<li>主页：<a href=\"{}\">{}</a></li>",
             escape_html(homepage),
             escape_html(homepage)
         ));
     }
+    if let Some(topics) = topics {
+        html.push_str(&format!("<li>Topics：{topics}</li>"));
+    }
+    if let Some(created_at) = created_at.as_ref() {
+        html.push_str(&format!("<li>创建时间：{}</li>", escape_html(created_at)));
+    }
+    if let Some(updated_at) = updated_at.as_ref() {
+        html.push_str(&format!("<li>最近更新：{}</li>", escape_html(updated_at)));
+    }
+    if archived {
+        html.push_str("<li>该仓库已归档</li>");
+    }
     html.push_str("</ul>");
+
+    if let Ok(readme) = fetch_github_readme(&client, owner, repo).await {
+        if !readme.trim().is_empty() {
+            html.push_str("<hr><h2>README</h2>");
+            html.push_str(&readme);
+        }
+    }
 
     Ok(WebPage {
         title: full_name,
@@ -97,9 +147,52 @@ async fn fetch_github_page(owner: &str, repo: &str) -> Result<WebPage, String> {
         cover_url,
         description,
         content_html: html,
-        publish_time: updated_at,
+        publish_time: updated_at.or(created_at),
         site_name: "GitHub".into(),
     })
+}
+
+async fn fetch_github_readme(
+    client: &Client,
+    owner: &str,
+    repo: &str,
+) -> Result<String, String> {
+    let url = format!("https://api.github.com/repos/{owner}/{repo}/readme");
+    let response = client
+        .get(&url)
+        .header("Accept", "application/vnd.github.html+json")
+        .send()
+        .await
+        .map_err(|e| e.to_string())?;
+
+    if !response.status().is_success() {
+        return Err(format!("GitHub README HTTP {}", response.status()));
+    }
+
+    let text = response.text().await.map_err(|e| e.to_string())?;
+    if text.trim_start().starts_with('<') {
+        let mut html = text;
+        if html.len() > 500_000 {
+            let mut end = 500_000;
+            while end > 0 && !html.is_char_boundary(end) {
+                end -= 1;
+            }
+            html.truncate(end);
+        }
+        return Ok(html);
+    }
+
+    // Some GitHub API versions return the markdown/JSON payload instead.
+    let raw = client
+        .get(&url)
+        .header("Accept", "application/vnd.github.raw")
+        .send()
+        .await
+        .map_err(|e| e.to_string())?
+        .text()
+        .await
+        .map_err(|e| e.to_string())?;
+    Ok(format!("<pre>{}</pre>", escape_html(&raw)))
 }
 
 fn meta_content(doc: &Html, attr: &str, name: &str) -> Option<String> {

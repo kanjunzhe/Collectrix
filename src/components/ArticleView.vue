@@ -81,6 +81,19 @@ const sanitizedHtml = computed(() =>
           "blockquote",
           "code",
           "pre",
+          "table",
+          "thead",
+          "tbody",
+          "tr",
+          "th",
+          "td",
+          "hr",
+          "del",
+          "s",
+          "details",
+          "summary",
+          "sup",
+          "sub",
         ],
         ALLOWED_ATTR: ["href", "src", "alt", "title"],
       })
@@ -121,5 +134,27 @@ onMounted(async () => {
   border-left: 3px solid rgba(128, 128, 128, 0.3);
   padding-left: 12px;
   color: rgba(128, 128, 128, 0.9);
+}
+.article-content :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 13px;
+}
+.article-content :deep(th),
+.article-content :deep(td) {
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  padding: 6px 8px;
+  text-align: left;
+}
+.article-content :deep(th) {
+  background: rgba(var(--v-theme-primary), 0.08);
+}
+.article-content :deep(details) {
+  margin: 10px 0;
+}
+.article-content :deep(summary) {
+  cursor: pointer;
+  font-weight: 600;
 }
 </style>

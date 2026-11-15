@@ -627,6 +627,7 @@ const en: Record<string, string> = {
   "已导入 {n} 个本地视频": "Imported {n} local videos",
   "导入本地视频失败：{e}": "Failed to import local videos: {e}",
   "AI 加标点 / 校对": "AI punctuation / proofread",
+  "转录后自动使用 AI 加标点 / 校对": "Automatically run AI punctuation / proofreading after transcription",
   "AI 校对完成": "AI proofreading complete",
   "AI 校对失败：{e}": "AI proofreading failed: {e}",
   "Bilibili 字幕": "Bilibili subtitles",

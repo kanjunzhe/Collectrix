@@ -263,6 +263,14 @@
           />
         </template>
 
+        <v-checkbox
+          v-model="settings.transcribe_auto_polish"
+          :label="t('转录后自动使用 AI 加标点 / 校对')"
+          density="compact"
+          hide-details
+          class="mt-1"
+        />
+
         <v-select
           v-if="settings.transcribe_provider !== 'bilibili'"
           v-model="settings.whisper_language"
@@ -537,6 +545,7 @@ const settings = ref<AppSettings>({
   whisper_model_path: "",
   whisper_language: "auto",
   transcribe_provider: "local",
+  transcribe_auto_polish: false,
   openai_api_key: "",
   openai_base_url: "https://api.openai.com/v1",
   openai_transcribe_model: "whisper-1",

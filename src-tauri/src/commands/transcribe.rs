@@ -166,11 +166,21 @@ pub async fn transcribe_video(
         }
     }
 
-    let text = text.ok_or_else(|| {
+    let mut text = text.ok_or_else(|| {
         last_error.unwrap_or_else(|| {
             "该视频没有可用的音频或字幕。请先下载音频，或在设置中配置在线转录服务。".into()
         })
     })?;
+
+    // 可选：转录完成后直接交给 AI 加标点、纠错和分段。
+    // AI 失败时保留原始转录，不让一次校对失败导致整个转录失败。
+    if settings.ai_enabled && settings.transcribe_auto_polish {
+        match ai::polish_text(&settings, &text).await {
+            Ok(polished) if !polished.trim().is_empty() => text = polished,
+            Ok(_) => {}
+            Err(error) => eprintln!("[transcribe] AI polish skipped: {error}"),
+        }
+    }
 
     save_transcript(&app, &settings, &state, video_id, &text)?;
     Ok(text)

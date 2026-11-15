@@ -192,7 +192,7 @@ npm run android:build
 
 推荐在设置中使用二维码登录，登录成功后会自动保存 Cookie。也可以手动填写：
 
-```
+```plain
 SESSDATA=xxx; bili_jct=xxx; DedeUserID=xxx
 ```
 
@@ -321,3 +321,21 @@ src-tauri/
 - 新增平台需要后端 `VideoProvider`、`all_providers()` 注册，以及前端 `PLATFORMS` / `guessPlatform()`。
 - 用户可见文案使用 `t("中文文案")`，并在 `src/i18n.ts` 增加英文条目。
 - 项目没有测试、lint 或格式化脚本；提交前至少运行 `npm run build` 和 `cargo check`。
+
+## 0.1.1 完成项
+
+- [x] 1. GitHub 自动获取信息，并显示更详细的内容
+  - 仓库名称、作者、语言、Stars、Forks、Watchers、Issues
+  - 许可证、默认分支、创建/更新时间、Topics、主页和归档状态
+  - 自动读取并展示仓库 README，文章页支持表格、详情折叠等常见 Markdown 内容
+- [x] 2. 文字转写增强
+  - 支持本地 Whisper、OpenAI 兼容在线接口和 Bilibili 字幕
+  - 没有音频时自动回退本地 sidecar 字幕或 Bilibili 字幕
+  - 设置中可开启“转录后自动 AI 加标点 / 校对”
+  - 播放页仍保留手动“AI 加标点 / 校对”按钮
+- [x] 3. GitHub Actions 修复
+  - 修复 Linux/macOS/Windows 构建中的前端类型错误入口
+  - Android 改用 runner 预装 Android SDK，显式安装 NDK，避免 `setup-android` 的 `tools` 包错误
+  - Actions 现在覆盖 Windows、Linux、macOS Intel、macOS Apple Silicon 和 Android arm64 Debug APK
+
+版本更新说明见 [CHANGELOG.md](CHANGELOG.md)。

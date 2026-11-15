@@ -30,7 +30,7 @@
       </v-card-title>
       <v-card-text>
         <div class="info-row">
-          <span>{{ t("应用版本") }}</span><span>0.1.0</span>
+          <span>{{ t("应用版本") }}</span><span>0.1.1</span>
         </div>
         <v-alert
           v-if="updateError"

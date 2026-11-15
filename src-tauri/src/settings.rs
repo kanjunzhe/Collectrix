@@ -27,6 +27,7 @@ pub struct AppSettings {
 
     // 在线转录
     pub transcribe_provider: String, // "local" | "openai" | "bilibili"
+    pub transcribe_auto_polish: bool,
     pub openai_api_key: String,
     pub openai_base_url: String,
     pub openai_transcribe_model: String,
@@ -71,6 +72,7 @@ impl Default for AppSettings {
             whisper_language: "auto".into(),
 
             transcribe_provider: "local".into(),
+            transcribe_auto_polish: false,
             openai_api_key: String::new(),
             openai_base_url: "https://api.openai.com/v1".into(),
             openai_transcribe_model: "whisper-1".into(),
