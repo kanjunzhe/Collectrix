@@ -4,7 +4,9 @@ use async_trait::async_trait;
 pub struct GitHubProvider;
 
 fn repo_id(url: &str) -> Option<String> {
-    let parsed = url::Url::parse(url).ok()?;
+    let parsed = url::Url::parse(url)
+        .ok()
+        .or_else(|| url::Url::parse(&format!("https://{url}")).ok())?;
     let host = parsed.host_str()?;
     if host != "github.com" && host != "www.github.com" {
         return None;
@@ -16,7 +18,7 @@ fn repo_id(url: &str) -> Option<String> {
     if parts.len() < 2 {
         return None;
     }
-    Some(format!("{}/{}", parts[0], parts[1]))
+    Some(format!("{}/{}", parts[0], parts[1].trim_end_matches(".git")))
 }
 
 #[async_trait]

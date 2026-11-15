@@ -5,6 +5,28 @@ use serde::Serialize;
 const WEB_USER_AGENT: &str =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36";
 
+#[derive(Debug, Serialize, Default)]
+pub struct GithubInfo {
+    pub full_name: String,
+    pub owner: Option<String>,
+    pub avatar_url: Option<String>,
+    pub description: Option<String>,
+    pub language: Option<String>,
+    pub stars: i64,
+    pub forks: i64,
+    pub watchers: i64,
+    pub issues: i64,
+    pub license: Option<String>,
+    pub homepage: Option<String>,
+    pub default_branch: String,
+    pub archived: bool,
+    pub topics: Vec<String>,
+    pub created_at: Option<String>,
+    pub updated_at: Option<String>,
+    pub pushed_at: Option<String>,
+    pub html_url: String,
+}
+
 #[derive(Debug, Serialize)]
 pub struct WebPage {
     pub title: String,
@@ -14,6 +36,7 @@ pub struct WebPage {
     pub content_html: String,
     pub publish_time: Option<String>,
     pub site_name: String,
+    pub github: Option<GithubInfo>,
 }
 
 fn escape_html(value: &str) -> String {
@@ -25,7 +48,9 @@ fn escape_html(value: &str) -> String {
 }
 
 fn is_github_repo(url: &str) -> Option<(String, String)> {
-    let parsed = url::Url::parse(url).ok()?;
+    let parsed = url::Url::parse(url)
+        .ok()
+        .or_else(|| url::Url::parse(&format!("https://{url}")).ok())?;
     if parsed.host_str()? != "github.com" && parsed.host_str()? != "www.github.com" {
         return None;
     }
@@ -33,7 +58,10 @@ fn is_github_repo(url: &str) -> Option<(String, String)> {
     if parts.len() < 2 {
         return None;
     }
-    Some((parts[0].to_string(), parts[1].to_string()))
+    Some((
+        parts[0].to_string(),
+        parts[1].trim_end_matches(".git").to_string(),
+    ))
 }
 
 pub async fn fetch_page(url: &str) -> Result<WebPage, String> {
@@ -65,10 +93,17 @@ async fn fetch_github_page(owner: &str, repo: &str) -> Result<WebPage, String> {
     }
 
     let full_name = json["full_name"].as_str().unwrap_or(repo).to_string();
-    let description = json["description"].as_str().map(String::from);
+    let description = json["description"]
+        .as_str()
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(String::from);
     let author = json["owner"]["login"].as_str().map(String::from);
     let cover_url = json["owner"]["avatar_url"].as_str().map(String::from);
-    let language = json["language"].as_str().unwrap_or("—");
+    let language = json["language"]
+        .as_str()
+        .filter(|value| !value.is_empty())
+        .map(String::from);
     let stars = json["stargazers_count"].as_i64().unwrap_or(0);
     let forks = json["forks_count"].as_i64().unwrap_or(0);
     let watchers = json["subscribers_count"]
@@ -76,10 +111,15 @@ async fn fetch_github_page(owner: &str, repo: &str) -> Result<WebPage, String> {
         .or_else(|| json["watchers_count"].as_i64())
         .unwrap_or(0);
     let issues = json["open_issues_count"].as_i64().unwrap_or(0);
-    let homepage = json["homepage"].as_str().filter(|value| !value.is_empty());
+    let homepage = json["homepage"]
+        .as_str()
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(String::from);
     let updated_at = json["updated_at"].as_str().map(String::from);
     let created_at = json["created_at"].as_str().map(String::from);
-    let default_branch = json["default_branch"].as_str().unwrap_or("main");
+    let pushed_at = json["pushed_at"].as_str().map(String::from);
+    let default_branch = json["default_branch"].as_str().unwrap_or("main").to_string();
     let archived = json["archived"].as_bool().unwrap_or(false);
     let topics = json["topics"]
         .as_array()
@@ -87,68 +127,58 @@ async fn fetch_github_page(owner: &str, repo: &str) -> Result<WebPage, String> {
             items
                 .iter()
                 .filter_map(|item| item.as_str())
-                .map(|item| format!("<code>{}</code>", escape_html(item)))
+                .map(String::from)
                 .collect::<Vec<_>>()
-                .join(" ")
         })
-        .filter(|value| !value.is_empty());
+        .unwrap_or_default();
     let license = json["license"]["spdx_id"]
         .as_str()
-        .or_else(|| json["license"]["name"].as_str());
+        .filter(|value| *value != "NOASSERTION")
+        .or_else(|| json["license"]["name"].as_str())
+        .map(String::from);
+    let html_url = json["html_url"]
+        .as_str()
+        .map(String::from)
+        .unwrap_or_else(|| format!("https://github.com/{full_name}"));
 
-    let mut html = String::new();
-    if let Some(text) = &description {
-        html.push_str(&format!("<p>{}</p>", escape_html(text)));
-    }
-    html.push_str("<ul>");
-    html.push_str(&format!("<li>语言：{}</li>", escape_html(language)));
-    html.push_str(&format!("<li>Stars：{stars}</li>"));
-    html.push_str(&format!("<li>Forks：{forks}</li>"));
-    html.push_str(&format!("<li>Watchers：{watchers}</li>"));
-    html.push_str(&format!("<li>Open issues：{issues}</li>"));
-    html.push_str(&format!(
-        "<li>默认分支：<code>{}</code></li>",
-        escape_html(default_branch)
-    ));
-    if let Some(license) = license {
-        html.push_str(&format!("<li>许可证：{}</li>", escape_html(license)));
-    }
-    if let Some(homepage) = homepage {
-        html.push_str(&format!(
-            "<li>主页：<a href=\"{}\">{}</a></li>",
-            escape_html(homepage),
-            escape_html(homepage)
-        ));
-    }
-    if let Some(topics) = topics {
-        html.push_str(&format!("<li>Topics：{topics}</li>"));
-    }
-    if let Some(created_at) = created_at.as_ref() {
-        html.push_str(&format!("<li>创建时间：{}</li>", escape_html(created_at)));
-    }
-    if let Some(updated_at) = updated_at.as_ref() {
-        html.push_str(&format!("<li>最近更新：{}</li>", escape_html(updated_at)));
-    }
-    if archived {
-        html.push_str("<li>该仓库已归档</li>");
-    }
-    html.push_str("</ul>");
+    let content_html = match fetch_github_readme(&client, owner, repo).await {
+        Ok(readme) if !readme.trim().is_empty() => readme,
+        _ => description
+            .as_ref()
+            .map(|text| format!("<p>{}</p>", escape_html(text)))
+            .unwrap_or_else(|| "<p>该仓库没有 README。</p>".into()),
+    };
 
-    if let Ok(readme) = fetch_github_readme(&client, owner, repo).await {
-        if !readme.trim().is_empty() {
-            html.push_str("<hr><h2>README</h2>");
-            html.push_str(&readme);
-        }
-    }
+    let github = GithubInfo {
+        full_name: full_name.clone(),
+        owner: author.clone(),
+        avatar_url: cover_url.clone(),
+        description: description.clone(),
+        language,
+        stars,
+        forks,
+        watchers,
+        issues,
+        license,
+        homepage,
+        default_branch,
+        archived,
+        topics,
+        created_at: created_at.clone(),
+        updated_at: updated_at.clone(),
+        pushed_at,
+        html_url,
+    };
 
     Ok(WebPage {
         title: full_name,
         author,
         cover_url,
         description,
-        content_html: html,
+        content_html,
         publish_time: updated_at.or(created_at),
         site_name: "GitHub".into(),
+        github: Some(github),
     })
 }
 
@@ -297,5 +327,6 @@ async fn fetch_html_page(url: &str) -> Result<WebPage, String> {
         content_html,
         publish_time,
         site_name,
+        github: None,
     })
 }

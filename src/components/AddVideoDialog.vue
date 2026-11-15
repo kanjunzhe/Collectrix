@@ -18,7 +18,7 @@
               : t('支持 B站、YouTube、抖音、B站专栏、视频号')
           "
           :disabled="fetching || saving"
-          @keydown.enter="onFetch"
+          @keydown.enter="onFetch()"
         >
           <template #append-inner>
             <v-chip
@@ -32,6 +32,16 @@
           </template>
         </v-text-field>
 
+        <v-alert
+          v-if="fetchError"
+          type="warning"
+          variant="tonal"
+          density="compact"
+          class="mb-3"
+        >
+          {{ t("自动解析失败：{e}", { e: fetchError }) }}
+        </v-alert>
+
         <!-- 抓取按钮 -->
         <div class="d-flex" style="gap: 8px">
           <v-btn
@@ -40,7 +50,7 @@
             prepend-icon="mdi-cloud-download"
             :loading="fetching"
             :disabled="!videoUrl.trim() || saving"
-            @click="onFetch"
+            @click="onFetch()"
           >
             {{ t("抓取信息") }}
           </v-btn>
@@ -216,7 +226,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import { getPlatform, guessPlatform } from "../platforms";
 import { notify } from "../composables/useUI";
@@ -245,6 +255,8 @@ const videoUrl = ref("");
 const fetching = ref(false);
 const saving = ref(false);
 const fetched = ref<VideoMeta | null>(null);
+const fetchError = ref<string | null>(null);
+let autoFetchTimer: ReturnType<typeof setTimeout> | null = null;
 const targetCategory = ref<number | null>(null);
 const tagInput = ref<string[]>([]);
 
@@ -278,9 +290,11 @@ const canSave = computed(() => {
 // ============ 打开时重置 ============
 
 watch(visible, (v) => {
+  clearAutoFetch();
   if (v) {
     videoUrl.value = "";
     fetched.value = null;
+    fetchError.value = null;
     targetCategory.value = props.initialCategoryId;
     tagInput.value = [];
     manualMode.value = false;
@@ -293,21 +307,84 @@ watch(visible, (v) => {
   }
 });
 
+// GitHub 链接输入/粘贴后自动解析，省去手动点「抓取信息」。
+watch(videoUrl, (value) => {
+  fetchError.value = null;
+  const url = value.trim();
+  if (fetched.value && fetched.value.original_url !== url) {
+    fetched.value = null;
+  }
+  if (!url || manualMode.value) {
+    clearAutoFetch();
+    return;
+  }
+  scheduleAutoFetch(url);
+});
+
+function clearAutoFetch() {
+  if (autoFetchTimer !== null) {
+    clearTimeout(autoFetchTimer);
+    autoFetchTimer = null;
+  }
+}
+
+function scheduleAutoFetch(url: string) {
+  clearAutoFetch();
+  if (!visible.value || fetching.value || manualMode.value) return;
+  if (guessPlatform(url) !== "github") return;
+  // 至少要有 owner/repo 两段路径，避免只输入 github.com 或用户名时误触发。
+  if (
+    !/^(https?:\/\/)?(www\.)?github\.com\/[^/?#]+\/[^/?#]+/i.test(
+      normalizeUrl(url),
+    )
+  ) {
+    return;
+  }
+  if (fetched.value?.original_url === url) return;
+
+  autoFetchTimer = setTimeout(() => {
+    autoFetchTimer = null;
+    if (
+      visible.value &&
+      !fetching.value &&
+      !manualMode.value &&
+      videoUrl.value.trim() === url
+    ) {
+      void onFetch({ auto: true });
+    }
+  }, 600);
+}
+
 // ============ 抓取 ============
 
-async function onFetch() {
-  const url = videoUrl.value.trim();
-  if (!url) return;
+async function onFetch(options: { auto?: boolean } = {}) {
+  clearAutoFetch();
+  const url = normalizeUrl(videoUrl.value);
+  if (!url || fetching.value) return;
+  if (videoUrl.value.trim() !== url) {
+    videoUrl.value = url;
+  }
 
+  const auto = options.auto === true;
   fetching.value = true;
+  fetchError.value = null;
   manualMode.value = false;
 
   try {
     const meta = await invoke<VideoMeta>("fetch_video_meta", { url });
+    if (videoUrl.value.trim() !== url) return;
     fetched.value = meta;
-    notify.success(t("已抓取：{title}", { title: meta.title }));
+    if (!auto) {
+      notify.success(t("已抓取：{title}", { title: meta.title }));
+    }
   } catch (e) {
     const msg = String(e);
+    fetchError.value = msg;
+
+    if (auto) {
+      // 自动解析失败时保留输入，用户仍可手动点击抓取或手动录入。
+      return;
+    }
 
     // 已知平台但无法自动解析时，自动进入手动模式
     if (guessedPlatform.value) {
@@ -325,6 +402,8 @@ async function onFetch() {
   }
 }
 
+onBeforeUnmount(clearAutoFetch);
+
 // ============ 手动模式 ============
 
 function enterManualMode() {
@@ -333,6 +412,7 @@ function enterManualMode() {
     return;
   }
 
+  clearAutoFetch();
   manualMode.value = true;
 
   // 如果已有抓取结果，用它预填
@@ -352,6 +432,7 @@ async function onSave() {
   if (!canSave.value) return;
 
   saving.value = true;
+  const urlForSave = normalizeUrl(videoUrl.value);
 
   try {
     let data: VideoMeta;
@@ -359,7 +440,7 @@ async function onSave() {
     if (manualMode.value) {
       const platformId = guessedPlatform.value?.id ?? "manual";
       // 手动模式：platform_id 用 URL 里能提取的 id 或时间戳兜底
-      const pid = extractPidFromUrl(videoUrl.value) ?? `manual_${Date.now()}`;
+      const pid = extractPidFromUrl(urlForSave) ?? `manual_${Date.now()}`;
 
       data = {
         platform: platformId,
@@ -369,7 +450,7 @@ async function onSave() {
         cover_url: manual.value.cover_url.trim() || null,
         description: manual.value.description.trim() || null,
         duration: null,
-        original_url: videoUrl.value.trim(),
+        original_url: urlForSave,
         aid: null,
         cid: null,
       };
@@ -383,7 +464,7 @@ async function onSave() {
     await invoke("save_video", {
       data,
       categoryId: targetCategory.value,
-      originalUrl: videoUrl.value.trim(),
+      originalUrl: urlForSave,
       tags: tagInput.value,
       preserveTags: false,
     });
@@ -399,6 +480,13 @@ async function onSave() {
 }
 
 // ============ 工具函数 ============
+
+function normalizeUrl(value: string): string {
+  const url = value.trim();
+  if (/^https?:\/\//i.test(url)) return url;
+  if (/^(www\.)?github\.com\//i.test(url)) return `https://${url}`;
+  return url;
+}
 
 function extractPidFromUrl(url: string): string | null {
   const patterns: RegExp[] = [

@@ -1,5 +1,20 @@
 # 更新说明
 
+## 未发布
+
+### 新增
+
+- GitHub 链接在添加窗口中输入或粘贴后自动解析，无需手动点击「抓取信息」
+- GitHub 详情页新增项目信息卡片，展示 Stars、Forks、Watchers、Issues、语言、许可证、分支、创建/更新时间和 Topics
+- GitHub 详情页补齐收藏信息、标签、描述和原项目入口
+
+### 修复
+
+- 修复 GitHub 收藏项目详情页空白或只显示标题的问题
+- 详情加载失败时显示错误和本地描述，不再静默显示空白
+- GitHub README 渲染补充 div、article、figure 等常见标签
+- 兼容 `github.com/owner/repo`、`.git` 后缀等链接格式
+
 ## 0.1.1
 
 ### 新增

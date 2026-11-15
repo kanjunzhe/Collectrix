@@ -657,6 +657,23 @@ const en: Record<string, string> = {
   "开启 AI 后可以使用 AI 整理、AI 筛选和 AI 对话；专题、记事本和思维导图可以帮你把视频变成可检索的知识。": "Enable AI to use AI Organize, AI Filter and AI Chat. Topics, notebooks and the mind map turn videos into searchable knowledge.",
   "AI 设置集中在「设置 → AI」，没有配置 API 时不会影响普通视频管理功能。": "AI settings live in Settings → AI. Unconfigured AI does not affect regular library management.",
   "第一次使用？可以重新查看 Collectrix 的功能介绍。": "New here? Reopen the Collectrix feature tour.",
+  "项目信息": "Project info",
+  "收藏信息": "Saved item",
+  "正在解析项目详情…": "Loading project details…",
+  "加载项目详情失败：{e}": "Failed to load project details: {e}",
+  "暂无详细内容，请打开原网页查看。": "No details available. Open the original page to view it.",
+  "打开原网页": "Open original page",
+  "打开项目": "Open project",
+  "主页": "Homepage",
+  "许可证": "License",
+  "默认分支": "Default branch",
+  "创建时间": "Created",
+  "最近更新": "Updated",
+  "该仓库已归档": "This repository is archived",
+  "Topics": "Topics",
+  "平台": "Platform",
+  "描述": "Description",
+  "自动解析失败：{e}": "Auto parsing failed: {e}",
 };
 
 const stored = (() => {
