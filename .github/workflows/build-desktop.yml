@@ -145,6 +145,7 @@ jobs:
     runs-on: macos-15-intel
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.15"
+      CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -176,6 +177,7 @@ jobs:
     runs-on: macos-15
     env:
       MACOSX_DEPLOYMENT_TARGET: "11.0"
+      CMAKE_OSX_DEPLOYMENT_TARGET: "11.0"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
