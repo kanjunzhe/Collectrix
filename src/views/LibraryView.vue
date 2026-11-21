@@ -551,6 +551,7 @@ async function loadVideos(reset = true) {
         tagId: activeTag.value.id,
         limit: PAGE_SIZE,
         offset: loadedOffset.value,
+        excludeArticles: true,
       });
       if (requestId !== loadRequestId) return;
       videos.value = reset ? page : [...videos.value, ...page];
@@ -563,6 +564,7 @@ async function loadVideos(reset = true) {
         categoryId: null,
         limit: PAGE_SIZE,
         offset: loadedOffset.value,
+        excludeArticles: true,
       });
       if (requestId !== loadRequestId) return;
       videos.value = reset ? page : [...videos.value, ...page];
@@ -572,7 +574,7 @@ async function loadVideos(reset = true) {
     }
     const nextGroups = await invoke<CategoryVideoGroup[]>(
       "list_videos_with_children",
-      { categoryId: selectedCategory.value },
+      { categoryId: selectedCategory.value, excludeArticles: true },
     );
     if (requestId !== loadRequestId) return;
     groups.value = nextGroups;

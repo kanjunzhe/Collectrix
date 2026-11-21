@@ -171,8 +171,29 @@ pub async fn fetch_video_meta(url: String) -> Result<VideoMeta, String> {
     Err(format!("不支持的链接：{url}"))
 }
 #[tauri::command]
-pub async fn fetch_web_article(url: String) -> Result<crate::web::WebPage, String> {
-    crate::web::fetch_page(&url).await
+pub async fn fetch_web_article(
+    url: String,
+    app: tauri::AppHandle,
+) -> Result<crate::web::WebPage, String> {
+    let token = settings::load_settings(&app).github_token;
+    let token = if token.trim().is_empty() {
+        None
+    } else {
+        Some(token.as_str())
+    };
+    crate::web::fetch_page_with_token(&url, token).await
+}
+
+#[tauri::command]
+pub async fn list_github_stars(
+    app: tauri::AppHandle,
+    username: Option<String>,
+    token: Option<String>,
+) -> Result<Vec<VideoMeta>, String> {
+    let settings = settings::load_settings(&app);
+    let username = username.unwrap_or(settings.github_username);
+    let token = token.unwrap_or(settings.github_token);
+    crate::providers::github::fetch_starred_repos(&username, &token).await
 }
 
 #[tauri::command]

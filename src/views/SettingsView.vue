@@ -364,6 +364,34 @@
       </v-card-text>
     </v-card>
 
+    <!-- GitHub -->
+    <v-card variant="outlined" class="mb-4">
+      <v-card-title>GitHub</v-card-title>
+      <v-card-text>
+        <v-text-field
+          v-model="settings.github_username"
+          :label="t('GitHub 用户名')"
+          placeholder="octocat"
+          density="compact"
+          variant="outlined"
+        />
+        <v-text-field
+          v-model="settings.github_token"
+          :label="t('GitHub Token（可选，用于私有 Star 和更高 API 限额）')"
+          type="password"
+          density="compact"
+          variant="outlined"
+        />
+        <v-alert type="info" variant="tonal" density="compact">
+          {{
+            t(
+              "只读取公开 Star 时可以只填用户名；填写 Token 后读取当前账号的 Star，并支持私有仓库。Token 只需要 public_repo 或 repo 读取权限。",
+            )
+          }}
+        </v-alert>
+      </v-card-text>
+    </v-card>
+
     <!-- B 站登录 -->
     <v-card variant="outlined" class="mb-4">
       <v-card-title class="d-flex align-center">
@@ -527,6 +555,8 @@ const settings = ref<AppSettings>({
   ai_provider: "openai",
   ollama_path: "",
   bilibili_cookie: "",
+  github_username: "",
+  github_token: "",
   recent_days: 7,
   lock_enabled: false,
   lock_pin_hash: "",

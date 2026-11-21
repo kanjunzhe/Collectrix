@@ -205,6 +205,10 @@ export interface AppSettings {
   // Bilibili
   bilibili_cookie: string; // 完整 Cookie 字符串
 
+  // GitHub
+  github_username: string;
+  github_token: string;
+
   // UI
   recent_days: number; // 「近期新增」徽标判定天数
 

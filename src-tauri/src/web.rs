@@ -65,29 +65,45 @@ fn is_github_repo(url: &str) -> Option<(String, String)> {
 }
 
 pub async fn fetch_page(url: &str) -> Result<WebPage, String> {
+    fetch_page_with_token(url, None).await
+}
+
+pub async fn fetch_page_with_token(
+    url: &str,
+    token: Option<&str>,
+) -> Result<WebPage, String> {
     if let Some((owner, repo)) = is_github_repo(url) {
-        if let Ok(page) = fetch_github_page(&owner, &repo).await {
+        if let Ok(page) = fetch_github_page(&owner, &repo, token).await {
             return Ok(page);
         }
     }
     fetch_html_page(url).await
 }
 
-async fn fetch_github_page(owner: &str, repo: &str) -> Result<WebPage, String> {
+async fn fetch_github_page(
+    owner: &str,
+    repo: &str,
+    token: Option<&str>,
+) -> Result<WebPage, String> {
     let client = Client::builder()
         .user_agent("Collectrix")
         .timeout(std::time::Duration::from_secs(20))
         .build()
         .map_err(|e| e.to_string())?;
-    let json: serde_json::Value = client
+    let mut repo_request = client
         .get(format!("https://api.github.com/repos/{owner}/{repo}"))
         .header("Accept", "application/vnd.github+json")
+        .header("X-GitHub-Api-Version", "2022-11-28");
+    if let Some(token) = token.filter(|value| !value.trim().is_empty()) {
+        repo_request = repo_request.bearer_auth(token.trim());
+    }
+    let json: serde_json::Value = repo_request
         .send()
         .await
-        .map_err(|e| e.to_string())?
+        .map_err(|e| format!("连接 GitHub API 失败：{e}。请检查网络、代理、DNS 或系统证书"))?
         .json()
         .await
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| format!("解析 GitHub 仓库数据失败：{e}"))?;
     if !json["full_name"].is_string() {
         return Err("GitHub 接口未返回仓库信息".into());
     }
@@ -141,7 +157,7 @@ async fn fetch_github_page(owner: &str, repo: &str) -> Result<WebPage, String> {
         .map(String::from)
         .unwrap_or_else(|| format!("https://github.com/{full_name}"));
 
-    let content_html = match fetch_github_readme(&client, owner, repo).await {
+    let content_html = match fetch_github_readme(&client, owner, repo, token).await {
         Ok(readme) if !readme.trim().is_empty() => readme,
         _ => description
             .as_ref()
@@ -186,14 +202,19 @@ async fn fetch_github_readme(
     client: &Client,
     owner: &str,
     repo: &str,
+    token: Option<&str>,
 ) -> Result<String, String> {
     let url = format!("https://api.github.com/repos/{owner}/{repo}/readme");
-    let response = client
+    let mut readme_request = client
         .get(&url)
-        .header("Accept", "application/vnd.github.html+json")
+        .header("Accept", "application/vnd.github.html+json");
+    if let Some(token) = token.filter(|value| !value.trim().is_empty()) {
+        readme_request = readme_request.bearer_auth(token.trim());
+    }
+    let response = readme_request
         .send()
         .await
-        .map_err(|e| e.to_string())?;
+        .map_err(|e| format!("连接 GitHub README 失败：{e}"))?;
 
     if !response.status().is_success() {
         return Err(format!("GitHub README HTTP {}", response.status()));

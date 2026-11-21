@@ -1,7 +1,7 @@
 mod bili_article;
 mod bilibili;
 mod douyin;
-mod github;
+pub(crate) mod github;
 mod web_article;
 #[cfg(not(target_os = "android"))]
 mod youtube;

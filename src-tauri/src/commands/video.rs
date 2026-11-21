@@ -128,18 +128,24 @@ pub fn list_videos(
     category_id: Option<i64>,
     limit: Option<i64>,
     offset: Option<i64>,
+    exclude_articles: Option<bool>,
     state: State<'_, DbState>,
 ) -> Result<Vec<VideoRow>, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     let limit = limit.unwrap_or(-1);
     let offset = offset.unwrap_or(0);
+    let filter = if exclude_articles.unwrap_or(false) {
+        " AND platform NOT IN ('github','blog','bilibili_article')"
+    } else {
+        ""
+    };
     let sql = if category_id.is_some() {
         format!(
-            "SELECT {SELECT_FIELDS} FROM videos WHERE category_id = ?1 ORDER BY updated_at DESC LIMIT ?2 OFFSET ?3"
+            "SELECT {SELECT_FIELDS} FROM videos WHERE category_id = ?1{filter} ORDER BY updated_at DESC LIMIT ?2 OFFSET ?3"
         )
     } else {
         format!(
-            "SELECT {SELECT_FIELDS} FROM videos ORDER BY updated_at DESC LIMIT ?1 OFFSET ?2"
+            "SELECT {SELECT_FIELDS} FROM videos WHERE 1=1{filter} ORDER BY updated_at DESC LIMIT ?1 OFFSET ?2"
         )
     };
     let mut stmt = conn.prepare(&sql).map_err(|e| e.to_string())?;
@@ -158,21 +164,56 @@ pub fn list_videos(
     Ok(videos)
 }
 
+/// 网页/GitHub 归类列表：scope = github | web | all。
+#[tauri::command]
+pub fn list_web_videos(
+    scope: String,
+    state: State<'_, DbState>,
+) -> Result<Vec<VideoRow>, String> {
+    let platforms: Vec<&str> = match scope.as_str() {
+        "github" => vec!["github"],
+        "web" => vec!["blog", "bilibili_article"],
+        _ => vec!["github", "blog", "bilibili_article"],
+    };
+    let conn = state.0.lock().map_err(|e| e.to_string())?;
+    let placeholders = (1..=platforms.len())
+        .map(|index| format!("?{index}"))
+        .collect::<Vec<_>>()
+        .join(",");
+    let sql = format!(
+        "SELECT {SELECT_FIELDS} FROM videos WHERE platform IN ({placeholders}) ORDER BY updated_at DESC"
+    );
+    let mut stmt = conn.prepare(&sql).map_err(|e| e.to_string())?;
+    let mut videos: Vec<VideoRow> = stmt
+        .query_map(params_from_iter(platforms.iter()), read_video_row)
+        .map_err(|e| e.to_string())?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| e.to_string())?;
+    fill_tags_many(&conn, &mut videos)?;
+    Ok(videos)
+}
+
 #[tauri::command]
 pub fn list_videos_by_tag(
     tag_id: i64,
     limit: Option<i64>,
     offset: Option<i64>,
+    exclude_articles: Option<bool>,
     state: State<'_, DbState>,
 ) -> Result<Vec<VideoRow>, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     let limit = limit.unwrap_or(-1);
     let offset = offset.unwrap_or(0);
+    let filter = if exclude_articles.unwrap_or(false) {
+        " AND v.platform NOT IN ('github','blog','bilibili_article')"
+    } else {
+        ""
+    };
     let mut stmt = conn
         .prepare(&format!(
             "SELECT {SELECT_FIELDS} FROM videos v
              JOIN video_tags vt ON vt.video_id = v.id
-             WHERE vt.tag_id = ?1 ORDER BY v.updated_at DESC LIMIT ?2 OFFSET ?3"
+             WHERE vt.tag_id = ?1{filter} ORDER BY v.updated_at DESC LIMIT ?2 OFFSET ?3"
         ))
         .map_err(|e| e.to_string())?;
     let mut videos: Vec<VideoRow> = stmt
@@ -440,10 +481,16 @@ pub async fn refresh_video_info(video_id: i64, state: State<'_, DbState>) -> Res
 #[tauri::command]
 pub fn list_videos_with_children(
     category_id: i64,
+    exclude_articles: Option<bool>,
     state: State<'_, DbState>,
 ) -> Result<Vec<CategoryVideoGroup>, String> {
     let conn = state.0.lock().map_err(|e| e.to_string())?;
     let mut groups: Vec<CategoryVideoGroup> = Vec::new();
+    let filter = if exclude_articles.unwrap_or(false) {
+        " AND platform NOT IN ('github','blog','bilibili_article')"
+    } else {
+        ""
+    };
 
     let current_name: String = conn
         .query_row(
@@ -456,7 +503,7 @@ pub fn list_videos_with_children(
     // 通用查询函数：给定分类 id 返回视频列表
     let query_videos = |cat_id: i64| -> Result<Vec<VideoRow>, String> {
         let sql = format!(
-            "SELECT {SELECT_FIELDS} FROM videos WHERE category_id = ?1 ORDER BY updated_at DESC"
+            "SELECT {SELECT_FIELDS} FROM videos WHERE category_id = ?1{filter} ORDER BY updated_at DESC"
         );
         let mut stmt = conn.prepare(&sql).map_err(|e| e.to_string())?;
         let mut videos: Vec<VideoRow> = stmt

@@ -4,13 +4,18 @@
 
 ### 新增
 
+- 新增独立的「GitHub 收藏」和「网页收藏」页面，视频库默认只显示视频类内容
+- 网页收藏支持添加博客、文章和其他网页
+- 支持读取 GitHub Star 列表，勾选后批量导入
 - GitHub 链接在添加窗口中输入或粘贴后自动解析，无需手动点击「抓取信息」
 - GitHub 详情页新增项目信息卡片，展示 Stars、Forks、Watchers、Issues、语言、许可证、分支、创建/更新时间和 Topics
 - GitHub 详情页补齐收藏信息、标签、描述和原项目入口
+- 设置中新增 GitHub 用户名和 Token，Token 可用于私有仓库和更高 API 限额
 
 ### 修复
 
 - 修复 GitHub 收藏项目详情页空白或只显示标题的问题
+- 修复 GitHub 请求 `error sending request for url`：改用系统根证书，并补充网络/代理错误提示
 - 详情加载失败时显示错误和本地描述，不再静默显示空白
 - GitHub README 渲染补充 div、article、figure 等常见标签
 - 兼容 `github.com/owner/repo`、`.git` 后缀等链接格式

@@ -40,6 +40,7 @@ pub fn run() {
             commands::category::list_videos_in_category_tree,
             // video
             commands::video::list_videos,
+            commands::video::list_web_videos,
             commands::video::list_videos_by_tag,
             commands::video::get_video,
             commands::video::save_video,
@@ -95,6 +96,7 @@ pub fn run() {
             commands::platform::search_bili_videos,
             commands::platform::fetch_bili_article_content,
             commands::platform::fetch_web_article,
+            commands::platform::list_github_stars,
             commands::platform::list_fav_folders,
             commands::platform::import_fav_folder,
             commands::platform::get_danmaku,

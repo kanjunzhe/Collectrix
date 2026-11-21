@@ -39,6 +39,10 @@ pub struct AppSettings {
     // B 站登录态
     pub bilibili_cookie: String,
 
+    // GitHub
+    pub github_username: String,
+    pub github_token: String,
+
     // UI
     pub recent_days: i64,
 
@@ -81,6 +85,9 @@ impl Default for AppSettings {
             ai_model: "gpt-4o-mini".into(),
 
             bilibili_cookie: String::new(),
+
+            github_username: String::new(),
+            github_token: String::new(),
 
             recent_days: 7,
 

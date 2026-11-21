@@ -94,6 +94,18 @@
           @click="navigate('library')"
         />
         <v-list-item
+          prepend-icon="mdi-github"
+          :title="t('GitHub 收藏')"
+          :active="currentView === 'github'"
+          @click="navigate('github')"
+        />
+        <v-list-item
+          prepend-icon="mdi-web"
+          :title="t('网页收藏')"
+          :active="currentView === 'web'"
+          @click="navigate('web')"
+        />
+        <v-list-item
           prepend-icon="mdi-chart-box-outline"
           :title="t('统计')"
           :active="currentView === 'stats'"
@@ -189,6 +201,18 @@
           @play="openPlayer"
           @tags-changed="loadTags"
         />
+        <WebCollectionView
+          v-else-if="currentView === 'github'"
+          scope="github"
+          @play="openPlayer"
+          @edit="openGlobalEdit"
+        />
+        <WebCollectionView
+          v-else-if="currentView === 'web'"
+          scope="web"
+          @play="openPlayer"
+          @edit="openGlobalEdit"
+        />
         <PlayerView
           v-else-if="currentView === 'player' && selectedVideo"
           :video="selectedVideo"
@@ -281,6 +305,9 @@ function lazyView(
 
 const DashboardView = lazyView(() => import("./views/DashboardView.vue"));
 const LibraryView = lazyView(() => import("./views/LibraryView.vue"));
+const WebCollectionView = lazyView(
+  () => import("./views/WebCollectionView.vue"),
+);
 const PlayerView = lazyView(() => import("./views/PlayerView.vue"));
 const TagManagerView = lazyView(() => import("./views/TagManagerView.vue"));
 const TopicManagerView = lazyView(() => import("./views/TopicManagerView.vue"));
@@ -329,6 +356,8 @@ const isDark = ref(false);
 type ViewName =
   | "dashboard"
   | "library"
+  | "github"
+  | "web"
   | "stats"
   | "mindmap"
   | "notebook"
@@ -551,9 +580,14 @@ function scheduleTagLoad() {
   globalThis.setTimeout(run, 300);
 }
 
+const viewBeforePlayer = ref<ViewName>("library");
+
 async function openPlayer(video: VideoRow) {
   // 默认在主窗口内播放，避免每次播放都创建新的 WebView2 窗口导致卡死。
   // 需要独立窗口时，可以在播放页点击“在新窗口播放”。
+  if (currentView.value !== "player") {
+    viewBeforePlayer.value = currentView.value;
+  }
   selectedVideo.value = video;
   currentView.value = "player";
   await nextTick();
@@ -568,7 +602,7 @@ async function onPlayerBack() {
     }
     return;
   }
-  navigate("library");
+  navigate(viewBeforePlayer.value);
 }
 
 async function initPlayerWindow() {
@@ -619,6 +653,7 @@ async function openGlobalEdit(video: VideoRow) {
 
 async function onExternalDataChanged() {
   await loadTags();
+  window.dispatchEvent(new CustomEvent("collectrix:data-changed"));
   if (selectedVideo.value) {
     try {
       selectedVideo.value = await invoke<VideoRow>("get_video", {
